@@ -5,8 +5,8 @@ const server = express();
 const bodyParser = require('body-parser');
 const port = process.env['AUTH_PORT'] || 3000;
 
-server.use(router);
 server.use(bodyParser.json());
+server.use(router);
 
 server.listen(port, () => {
   console.log(`servidor rodando na porta ${port}`);
