@@ -7,7 +7,7 @@ const getUserByEmail = () => {
 
 };
 
-authController.post('/', (req, res) => {
+authController.post('/', mandatoryFields(['email', 'password']), (req, res) => {
   
 });
 
