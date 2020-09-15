@@ -1,0 +1,8 @@
+{
+  "name": "auth",
+  "version": "1.0.0",
+  "description": "authentication and authorization for REST APIs",
+  "main": "index.js",
+  "author": "SARAGOCA Glaydson",
+  "license": "MIT"
+}
