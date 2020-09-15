@@ -5,6 +5,7 @@ const server = express();
 const bodyParser = require('body-parser');
 const port = process.env['AUTH_PORT'] || 3000;
 
+server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json());
 server.use(router);
 
