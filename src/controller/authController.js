@@ -1,9 +1,10 @@
 const express = require('express');
-const User = require('../model/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const User = require('../model/User');
 
 const mandatoryFields = require('../middleware/mandatoryFields');
+
 const authController = express.Router();
 
 authController.post('/signup', mandatoryFields(['name', 'email', 'password']), async (req, res) => {
@@ -17,17 +18,17 @@ authController.post('/signup', mandatoryFields(['name', 'email', 'password']), a
       });
     })
     .catch((err) => {
-      console.log(err, 'erro')
+      console.log(err, 'erro');
       res.status(500).json({
         code: 500,
         message: err,
       });
     });
-})
+});
 
 authController.post('/login', mandatoryFields(['email', 'password']), (req, res) => {
   const { email, password } = req.body;
-  let user = new User({ email });
+  const user = new User({ email });
   let scopes = [];
 
   const badCredentials = () => {
@@ -38,7 +39,7 @@ authController.post('/login', mandatoryFields(['email', 'password']), (req, res)
   };
 
   user.getByEmail(email)
-    .then( async () => {
+    .then(async () => {
       if (user.id) {
         scopes = await user.getScopes();
         if (bcrypt.compareSync(password, user.password)) {
@@ -50,14 +51,15 @@ authController.post('/login', mandatoryFields(['email', 'password']), (req, res)
           };
           res.status(200).json({
             ...payload,
-            token: jwt.sign(payload, process.env['AUTH_SECRET']),
+            token: jwt.sign(payload, process.env.AUTH_SECRET),
           });
         } else {
           badCredentials();
         }
       } else {
         badCredentials();
-        // dont return a 404 HTTP Response status, otherwise the endpoint would become a "suchEmailIsRegistered(email)" public query.
+        // dont return a 404 HTTP Response status
+        // otherwise the endpoint would become a "suchEmailIsRegistered(email)" public query.
       }
     })
     .catch((err) => {

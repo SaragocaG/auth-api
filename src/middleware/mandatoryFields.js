@@ -1,7 +1,7 @@
 const mandatoryFields = (required) => (
   (req, res, next) => {
     const missingFields = [];
-    required.map((field) => req.body[field] ? true : missingFields.push(field));
+    required.map((field) => (req.body[field] ? true : missingFields.push(field)));
     if (missingFields.length > 0) {
       res.status(400).json({
         code: 400,

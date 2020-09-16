@@ -6,7 +6,7 @@ const hasScope = (expectedScope) => (
     if (!token) {
       res.status(400).json({
         code: 400,
-        message: `token de acesso não informado.`,
+        message: 'token de acesso não informado.',
       });
     }
     try {
@@ -20,11 +20,11 @@ const hasScope = (expectedScope) => (
       } else {
         res.status(401).json({
           code: 401,
-          message: `você não tem acesso a esse recurso.`,
+          message: 'você não tem acesso a esse recurso.',
         });
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
       res.status(500).json({
         code: 500,
         message: err,
