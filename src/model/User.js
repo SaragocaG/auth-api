@@ -71,7 +71,7 @@ class User {
       return await mysql('tb_user')
         .update({ password: encryptPassword(password) })
         .where({ id: this.id })
-        .returning('*');
+        .returning();
     } catch (err) {
       console.log(err);
       return false;
