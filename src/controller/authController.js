@@ -1,13 +1,14 @@
-const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const User = require('../model/User');
+const express = require('express');
 
+const User = require('../model/User');
 const mandatoryFields = require('../middleware/mandatoryFields');
 
 const authController = express.Router();
 
-authController.post('/signup', mandatoryFields(['name', 'email', 'password']), async (req, res) => {
+const signupMandatoryFields = ['name', 'email', 'password'];
+authController.post('/signup', mandatoryFields(signupMandatoryFields), async (req, res) => {
   const { email, name, password } = req.body;
   const user = new User({ email, name, password });
   user.create()
@@ -26,7 +27,8 @@ authController.post('/signup', mandatoryFields(['name', 'email', 'password']), a
     });
 });
 
-authController.post('/login', mandatoryFields(['email', 'password']), (req, res) => {
+const loginMandatoryFields = ['email', 'password'];
+authController.post('/login', mandatoryFields(loginMandatoryFields), (req, res) => {
   const { email, password } = req.body;
   const user = new User({ email });
   let scopes = [];
@@ -58,8 +60,11 @@ authController.post('/login', mandatoryFields(['email', 'password']), (req, res)
         }
       } else {
         badCredentials();
-        // dont return a 404 HTTP Response status
-        // otherwise the endpoint would become a "suchEmailIsRegistered(email)" public query.
+        /*
+          dont return a 404 HTTP Response status
+          otherwise the endpoint would become a
+          "suchEmailIsRegistered(email)" public query.
+        */
       }
     })
     .catch((err) => {
