@@ -17,102 +17,75 @@ class User {
     this.createdAt = createdAt || '';
   }
 
-  create() {
-    return new Promise((resolve, reject) => {
+  async create() {
+    try {
       const newUser = {
-        name: this.name,
-        email: this.email,
-        password: encryptPassword(this.password),
+        name: this.name, email: this.email, password: encryptPassword(this.password),
       };
-      mysql('tb_user').insert({ ...newUser }).returning('id')
-        .then((user) => {
-          this.id = user.id;
-          this.name = newUser.name;
-          this.password = newUser.password;
-          this.email = newUser.email;
-          resolve(true);
-        })
-        .catch((err) => {
-          console.log('erro');
-          reject(err);
-        });
-    });
+      const user = await mysql('tb_user').insert({ ...newUser }).returning();
+      return user || {};
+    } catch (err) {
+      console.log(err);
+      return {};
+    }
   }
 
-  getById(id) {
-    return new Promise((resolve, reject) => {
-      mysql('tb_user').where({ id }).first()
-        .then((user) => {
-          if (user) {
-            this.id = user.id;
-            this.name = user.name;
-            this.password = user.password;
-            this.email = user.email;
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+  async getById(id) {
+    try {
+      const user = await mysql('tb_user').where({ id }).first();
+      if (user) {
+        this.id = user.id;
+        this.name = user.name;
+        this.password = user.password;
+        this.email = user.email;
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
-  getByEmail(email) {
-    return new Promise((resolve, reject) => {
-      mysql('tb_user').where({ email }).first()
-        .then((user) => {
-          if (user) {
-            this.id = user.id;
-            this.name = user.name;
-            this.password = user.password;
-            this.email = user.email;
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+  async getByEmail(email) {
+    try {
+      const user = await mysql('tb_user').where({ email }).first();
+      if (user) {
+        this.id = user.id;
+        this.name = user.name;
+        this.password = user.password;
+        this.email = user.email;
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
-  update() {
-    return new Promise((resolve, reject) => {
-      mysql('tb_user').update({ name: this.name }).where({ id: this.id }).returning('*')
-        .then((user) => {
-          resolve(user);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+  async update() {
+    try {
+      return await mysql('tb_user').update({ name: this.name }).where({ id: this.id }).returning('*');
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 
-  updatePassword(password) {
-    return new Promise((resolve, reject) => {
-      mysql('tb_user').update({ password: encryptPassword(password) }).where({ id: this.id }).returning('*')
-        .then((user) => {
-          resolve(user);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+  async updatePassword(password) {
+    try {
+      return await mysql('tb_user')
+        .update({ password: encryptPassword(password) })
+        .where({ id: this.id })
+        .returning('*');
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 
-  delete() {
-    return new Promise((resolve, reject) => {
-      mysql('tb_user').delete().where({ id: this.id })
-        .then(() => {
-          resolve(true);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+  async delete() {
+    try {
+      return await mysql('tb_user').delete().where({ id: this.id });
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 
   async getScopes() {
@@ -125,28 +98,22 @@ class User {
     }
   }
 
-  grantScope(scope) {
-    return new Promise((resolve, reject) => {
-      mysql('tb_user_scope').insert({ id_user: this.id, scope })
-        .then(() => {
-          resolve(true);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+  async grantScope(scope) {
+    try {
+      return await mysql('tb_user_scope').insert({ id_user: this.id, scope });
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 
-  revokeScope(scope) {
-    return new Promise((resolve, reject) => {
-      mysql('tb_user_scope').delete().where({ id_user: this.id, scope })
-        .then(() => {
-          resolve(true);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+  async revokeScope(scope) {
+    try {
+      return await mysql('tb_user_scope').delete().where({ id_user: this.id, scope });
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 }
 
