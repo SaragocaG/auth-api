@@ -1,13 +1,13 @@
 const mandatoryFields = (required) => (
   (req, res, next) => {
-    required.map((field) => {
-      if (!req.body[field]) {
-        res.status(400).json({
-          code: 400,
-          message: `campo "${field}" não informado.`,
-        });
-      }
-    });
+    const missingFields = [];
+    required.map((field) => req.body[field] ? true : missingFields.push(field));
+    if (missingFields.length > 0) {
+      res.status(400).json({
+        code: 400,
+        message: `campo(s) faltante(s): [${missingFields.join(', ')}].`,
+      });
+    }
 
     next();
   }
