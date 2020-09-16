@@ -1,3 +1,3 @@
 # auth-api
-Exemplo de autenticação e autorização em API REST.
+Exemplo de autenticação e autorização em API REST utilizando JWT.
 
